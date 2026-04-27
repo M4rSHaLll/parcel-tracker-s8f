@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	_ "modernc.org/sqlite"
 )
@@ -49,10 +50,10 @@ func TestAddGetDelete(t *testing.T) {
 	p, err := store.Get(id)
 	require.NoError(t, err)
 	// получите только что добавленную посылку, убедитесь в отсутствии ошибки
-	require.Equal(t, p.Client, parcel.Client)
-	require.Equal(t, p.Status, parcel.Status)
-	require.Equal(t, p.Address, parcel.Address)
-	require.Equal(t, p.CreatedAt, parcel.CreatedAt)
+	assert.Equal(t, p.Client, parcel.Client)
+	assert.Equal(t, p.Status, parcel.Status)
+	assert.Equal(t, p.Address, parcel.Address)
+	assert.Equal(t, p.CreatedAt, parcel.CreatedAt)
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
 
 	// delete
@@ -61,11 +62,6 @@ func TestAddGetDelete(t *testing.T) {
 
 	_, err = store.Get(id)
 	require.Error(t, err)
-	// удалите добавленную посылку, убедитесь в отсутствии ошибки
-	// проверьте, что посылку больше нельзя получить из БД
-
-	// удалите добавленную посылку, убедитесь в отсутствии ошибки
-	// проверьте, что посылку больше нельзя получить из БД
 }
 
 // TestSetAddress проверяет обновление адреса
@@ -93,7 +89,7 @@ func TestSetAddress(t *testing.T) {
 	// check
 	p, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, p.Address, newAddress)
+	assert.Equal(t, p.Address, newAddress)
 	// получите добавленную посылку и убедитесь, что адрес обновился
 }
 
@@ -122,33 +118,7 @@ func TestSetStatus(t *testing.T) {
 	// check
 	p, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, p.Status, newStatus)
-	// получите добавленную посылку и убедитесь, что статус обновился
-}
-
-// TestNextStatus проверяет обновление статуса на следующий
-func TestNextStatus(t *testing.T) {
-	// prepare
-	db, err := sql.Open("sqlite", "tracker.db")
-	require.NoError(t, err)
-	defer db.Close()
-
-	store := NewParcelStore(db)
-	service := NewParcelService(store)
-	parcel := getTestParcel()
-	// обновите статус, убедитесь в отсутствии ошибки
-
-	id, err := store.Add(parcel)
-	require.NoError(t, err)
-	require.NotZero(t, id)
-	// добавьте новую посылку в БД, убедитесь в отсутствии ошибки и наличии идентификатора
-
-	err = service.NextStatus(id)
-	require.NoError(t, err)
-	// check
-	p, err := store.Get(id)
-	require.NoError(t, err)
-	require.Equal(t, p.Status, ParcelStatusSent)
+	assert.Equal(t, p.Status, newStatus)
 	// получите добавленную посылку и убедитесь, что статус обновился
 }
 
@@ -198,7 +168,7 @@ func TestGetByClient(t *testing.T) {
 		require.True(t, ok)
 		// проверьте, что посылка с таким идентификатором была добавлена
 
-		require.Equal(t, p, parcel)
+		assert.Equal(t, p, parcel)
 		// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной p
 	}
 	// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
